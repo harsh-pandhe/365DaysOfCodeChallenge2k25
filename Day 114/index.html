@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Nav-bar</title>
+    <style>
+        .nav-top {
+            overflow: hidden;
+            background-color: antiquewhite;
+        }
+
+        .nav-top a {
+            float: left;
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: large;
+        }
+
+        .nav-top a:hover {
+            background-color: darkgray;
+            color: white;
+        }
+
+        .nav-top a.active {
+            background-color: gray;
+            color: white;
+        }
+
+        .nav-top .icon {
+            display: none;
+        }
+
+        @media screen and (max-width: 600px) {
+            .nav-top a:not(:first-child) {
+                display: none;
+            }
+
+            .nav-top a.icon {
+                float: right;
+                display: block;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .nav-top.responsive {
+                position: relative;
+            }
+
+            .nav-top.responsive a.icon {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+
+            .nav-top.responsive a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav-top" id="nav-top">
+        <a href="#home" class="active">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+        <a href="javascript:void(0)" class="icon" onclick="toggleNav()">&#9776;</a>
+    </div>
+    <script>
+        function toggleNav() {
+            let nav = document.getElementsByClassName('nav-top')[0];
+            if (nav.className === "nav-top") {
+                nav.className += " responsive";
+            } else {
+                nav.className = "nav-top";
+            }
+        }
+    </script>
+</body>
+
+</html>
