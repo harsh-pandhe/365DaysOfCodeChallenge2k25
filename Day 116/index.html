@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px black;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color:grey;
+        }
+
+        #taskList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #taskList li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin: 4px 0;
+            background-color: blanchedalmond;
+            border-radius: 4px;
+        }
+
+        .delete-btn {
+            background-color: red;
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>To-do List</h1>
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Add a new task">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadTasks);
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const li = createTaskElement(task);
+                taskList.appendChild(li);
+            });
+        }
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskValue = taskInput.value.trim();
+
+            if (taskValue) {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                tasks.push(taskValue);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+
+                const li = createTaskElement(taskValue);
+                document.getElementById('taskList').appendChild(li);
+                taskInput.value = '';
+            }
+        }
+
+        function createTaskElement(taskText) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${taskText}</span>
+                <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+            `;
+            return li;
+        }
+
+        function deleteTask(button) {
+            const li = button.parentElement;
+            const taskText = li.querySelector('span').textContent;
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+            const updatedTasks = tasks.filter(task => task !== taskText);
+            localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+            li.remove();
+        }
+    </script>
+</body>
+
+</html>
