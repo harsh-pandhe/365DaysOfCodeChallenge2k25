@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker Tool</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px grey;
+            text-align: center;
+        }
+
+        .color-display {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #ccc;
+            margin: 20px auto;
+            border-radius: 5px;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        input[type="color"] {
+            width: 100px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .color-value {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Color Picker Tool</h2>
+        <div class="color-display" id="colorDisplay"></div>
+        <div class="controls">
+            <input type="color" id="colorPicker" value="#ff0000">
+        </div>
+        <div class="color-value" id="colorValue">#ff0000</div>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const colorValue = document.getElementById('colorValue');
+
+        colorDisplay.style.backgroundColor = colorPicker.value;
+
+        colorPicker.addEventListener('input', (e) => {
+            const selectedColor = e.target.value;
+            colorDisplay.style.backgroundColor = selectedColor;
+            colorValue.textContent = selectedColor;
+        });
+    </script>
+</body>
+
+</html>
