@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: background 0.5s ease;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            color: white;
+            min-width: 600px;
+            position: relative;
+        }
+
+        .main-time {
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .time-zones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .zone-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .zone-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .zone-name {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .zone-time {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover,
+        .btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .format-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .format-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-dark {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .theme-neon {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+        }
+
+        .theme-neon .clock-container {
+            border: 2px solid #00ff41;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.3);
+        }
+
+        .theme-neon .main-time {
+            color: #00ff41;
+            text-shadow: 0 0 30px #00ff41;
+        }
+
+        .theme-sunset {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b95 100%);
+        }
+
+        .seconds {
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0.3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .clock-container {
+                min-width: 350px;
+                padding: 30px 20px;
+            }
+
+            .main-time {
+                font-size: 3rem;
+            }
+
+            .time-zones {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-default">
+    <div class="clock-container">
+        <div class="format-toggle" onclick="toggleFormat()">24H</div>
+
+        <div class="main-time" id="mainTime">00:00:00</div>
+        <div class="date-display" id="dateDisplay">Loading...</div>
+
+        <div class="time-zones">
+            <div class="zone-card">
+                <div class="zone-name">New York</div>
+                <div class="zone-time" id="nyTime">00:00</div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-name">London</div>
+                <div class="zone-time" id="londonTime">00:00</div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-name">Tokyo</div>
+                <div class="zone-time" id="tokyoTime">00:00</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn active" onclick="setTheme('default')">Default</button>
+            <button class="btn" onclick="setTheme('dark')">Dark</button>
+            <button class="btn" onclick="setTheme('neon')">Neon</button>
+            <button class="btn" onclick="setTheme('sunset')">Sunset</button>
+        </div>
+    </div>
+
+    <script>
+        let is24Hour = true;
+        let currentTheme = 'default';
+
+        const elements = {
+            mainTime: document.getElementById('mainTime'),
+            dateDisplay: document.getElementById('dateDisplay'),
+            nyTime: document.getElementById('nyTime'),
+            londonTime: document.getElementById('londonTime'),
+            tokyoTime: document.getElementById('tokyoTime'),
+            formatToggle: document.querySelector('.format-toggle')
+        };
+
+        const timeZones = {
+            local: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            ny: 'America/New_York',
+            london: 'Europe/London',
+            tokyo: 'Asia/Tokyo'
+        };
+
+        function updateClock() {
+            const now = new Date();
+
+            const mainTimeOptions = {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: !is24Hour,
+                timeZone: timeZones.local
+            };
+
+            let timeString = now.toLocaleTimeString('en-US', mainTimeOptions);
+
+            const colonBlink = Math.floor(now.getSeconds()) % 2 === 0;
+            if (colonBlink) {
+                timeString = timeString.replace(/:/g, '<span class="blink">:</span>');
+            }
+
+            elements.mainTime.innerHTML = timeString;
+
+            const dateOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: timeZones.local
+            };
+            elements.dateDisplay.textContent = now.toLocaleDateString('en-US', dateOptions);
+
+            const zoneOptions = {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: !is24Hour
+            };
+
+            elements.nyTime.textContent = now.toLocaleTimeString('en-US',
+                { ...zoneOptions, timeZone: timeZones.ny });
+            elements.londonTime.textContent = now.toLocaleTimeString('en-US',
+                { ...zoneOptions, timeZone: timeZones.london });
+            elements.tokyoTime.textContent = now.toLocaleTimeString('en-US',
+                { ...zoneOptions, timeZone: timeZones.tokyo });
+        }
+
+        function toggleFormat() {
+            is24Hour = !is24Hour;
+            elements.formatToggle.textContent = is24Hour ? '24H' : '12H';
+            updateClock();
+        }
+
+        function setTheme(theme) {
+            document.body.className = `theme-${theme}`;
+            currentTheme = theme;
+
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function autoTheme() {
+            const hour = new Date().getHours();
+            if (hour >= 6 && hour < 18) {
+                if (currentTheme === 'auto') setTheme('default');
+            } else {
+                if (currentTheme === 'auto') setTheme('dark');
+            }
+        }
+
+        function init() {
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            autoTheme();
+            setInterval(autoTheme, 3600000);
+        }
+
+        init();
+
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 't':
+                case 'T':
+                    toggleFormat();
+                    break;
+                case '1':
+                    setTheme('default');
+                    break;
+                case '2':
+                    setTheme('dark');
+                    break;
+                case '3':
+                    setTheme('neon');
+                    break;
+                case '4':
+                    setTheme('sunset');
+                    break;
+            }
+        });
+    </script>
+</body>
+
+</html>
