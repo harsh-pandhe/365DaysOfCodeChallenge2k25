@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .converter-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .currency-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .amount-input {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .amount-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .currency-select {
+            padding: 15px;
+            font-size: 1rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .currency-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .swap-btn {
+            display: block;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin: 25px 0;
+            border: 1px solid #e1e1e1;
+        }
+
+        .result-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .result-currency {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .exchange-rate {
+            font-size: 0.9rem;
+            color: #888;
+            padding: 10px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .popular-currencies {
+            margin-top: 25px;
+        }
+
+        .popular-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .currency-card {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .currency-card:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .currency-code {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .currency-name {
+            color: #666;
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-style: italic;
+        }
+
+        .error {
+            text-align: center;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            .converter-container {
+                padding: 30px 20px;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .result-amount {
+                font-size: 2rem;
+            }
+
+            .currency-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="converter-container">
+        <h1 class="title">Currency Converter</h1>
+        <p class="subtitle">Real-time exchange rates</p>
+
+        <div class="input-group">
+            <label class="input-label">From</label>
+            <div class="currency-input">
+                <input type="number" id="fromAmount" class="amount-input" placeholder="Enter amount" value="1" min="0">
+                <select id="fromCurrency" class="currency-select">
+                    <option value="USD">USD</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="swap-btn" id="swapBtn" onclick="swapCurrencies()">⇅</button>
+
+        <div class="input-group">
+            <label class="input-label">To</label>
+            <div class="currency-input">
+                <input type="number" id="toAmount" class="amount-input" readonly placeholder="Converted amount">
+                <select id="toCurrency" class="currency-select">
+                    <option value="EUR">EUR</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <div class="result-amount" id="resultAmount">0.00</div>
+            <div class="result-currency" id="resultCurrency">EUR</div>
+            <div class="exchange-rate" id="exchangeRate">1 USD = 0.85 EUR</div>
+        </div>
+
+        <div class="popular-currencies">
+            <div class="popular-title">Popular Currencies</div>
+            <div class="currency-grid" id="popularGrid">
+                <div class="currency-card loading">Loading currencies...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api.exchangerate-api.com/v4/latest/';
+        let exchangeRates = {};
+        let currencies = [];
+
+        const elements = {
+            fromAmount: document.getElementById('fromAmount'),
+            toAmount: document.getElementById('toAmount'),
+            fromCurrency: document.getElementById('fromCurrency'),
+            toCurrency: document.getElementById('toCurrency'),
+            resultSection: document.getElementById('resultSection'),
+            resultAmount: document.getElementById('resultAmount'),
+            resultCurrency: document.getElementById('resultCurrency'),
+            exchangeRate: document.getElementById('exchangeRate'),
+            popularGrid: document.getElementById('popularGrid')
+        };
+
+        const popularCurrencies = [
+            { code: 'USD', name: 'US Dollar' },
+            { code: 'EUR', name: 'Euro' },
+            { code: 'GBP', name: 'British Pound' },
+            { code: 'JPY', name: 'Japanese Yen' },
+            { code: 'AUD', name: 'Australian Dollar' },
+            { code: 'CAD', name: 'Canadian Dollar' },
+            { code: 'CHF', name: 'Swiss Franc' },
+            { code: 'CNY', name: 'Chinese Yuan' }
+        ];
+
+        async function fetchExchangeRates(baseCurrency = 'USD') {
+            try {
+                const response = await fetch(`${API_URL}${baseCurrency}`);
+                const data = await response.json();
+                exchangeRates = data.rates;
+                currencies = Object.keys(data.rates).sort();
+                populateCurrencySelects();
+                renderPopularCurrencies();
+                convertCurrency();
+            } catch (error) {
+                showError('Failed to fetch exchange rates. Please check your connection.');
+            }
+        }
+
+        function populateCurrencySelects() {
+            const fromSelected = elements.fromCurrency.value;
+            const toSelected = elements.toCurrency.value;
+
+            elements.fromCurrency.innerHTML = '';
+            elements.toCurrency.innerHTML = '';
+
+            currencies.forEach(currency => {
+                const option1 = new Option(currency, currency);
+                const option2 = new Option(currency, currency);
+                elements.fromCurrency.add(option1);
+                elements.toCurrency.add(option2);
+            });
+
+            elements.fromCurrency.value = fromSelected || 'USD';
+            elements.toCurrency.value = toSelected || 'EUR';
+        }
+
+        function renderPopularCurrencies() {
+            elements.popularGrid.innerHTML = '';
+
+            popularCurrencies.forEach(currency => {
+                const card = document.createElement('div');
+                card.className = 'currency-card';
+                card.innerHTML = `
+                    <div class="currency-code">${currency.code}</div>
+                    <div class="currency-name">${currency.name}</div>
+                `;
+                card.onclick = () => selectCurrency(currency.code);
+                elements.popularGrid.appendChild(card);
+            });
+        }
+
+        function selectCurrency(currencyCode) {
+            if (elements.fromCurrency.value === currencyCode) {
+                elements.toCurrency.value = currencyCode;
+            } else {
+                elements.fromCurrency.value = currencyCode;
+            }
+            convertCurrency();
+        }
+
+        function convertCurrency() {
+            const amount = parseFloat(elements.fromAmount.value) || 0;
+            const fromCur = elements.fromCurrency.value;
+            const toCur = elements.toCurrency.value;
+
+            if (amount === 0 || !fromCur || !toCur) {
+                elements.resultSection.style.display = 'none';
+                elements.toAmount.value = '';
+                return;
+            }
+
+            let rate;
+            if (fromCur === 'USD') {
+                rate = exchangeRates[toCur];
+            } else if (toCur === 'USD') {
+                rate = 1 / exchangeRates[fromCur];
+            } else {
+                rate = exchangeRates[toCur] / exchangeRates[fromCur];
+            }
+
+            const convertedAmount = (amount * rate).toFixed(2);
+
+            elements.toAmount.value = convertedAmount;
+            elements.resultAmount.textContent = convertedAmount;
+            elements.resultCurrency.textContent = toCur;
+            elements.exchangeRate.textContent = `1 ${fromCur} = ${rate.toFixed(4)} ${toCur}`;
+            elements.resultSection.style.display = 'block';
+        }
+
+        function swapCurrencies() {
+            const fromValue = elements.fromCurrency.value;
+            const toValue = elements.toCurrency.value;
+            const fromAmount = elements.fromAmount.value;
+            const toAmount = elements.toAmount.value;
+
+            elements.fromCurrency.value = toValue;
+            elements.toCurrency.value = fromValue;
+            elements.fromAmount.value = toAmount;
+
+            convertCurrency();
+        }
+
+        function showError(message) {
+            elements.popularGrid.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        elements.fromAmount.addEventListener('input', convertCurrency);
+        elements.fromCurrency.addEventListener('change', () => {
+            fetchExchangeRates(elements.fromCurrency.value);
+        });
+        elements.toCurrency.addEventListener('change', convertCurrency);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                swapCurrencies();
+            }
+        });
+
+        fetchExchangeRates();
+
+        setInterval(() => {
+            fetchExchangeRates(elements.fromCurrency.value);
+        }, 300000);
+    </script>
+</body>
+
+</html>
