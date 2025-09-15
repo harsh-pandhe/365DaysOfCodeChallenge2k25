@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Countdown Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(-45deg, #1e3c72, #2a5298, #667eea, #764ba2);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 90%;
+        }
+
+        .event-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .event-date {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .time-unit {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 30px 20px;
+            min-width: 120px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .time-unit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .time-unit:hover::before {
+            left: 100%;
+        }
+
+        .time-unit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .time-value {
+            font-size: 3rem;
+            font-weight: 700;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .expired {
+            font-size: 2rem;
+            color: #ff6b6b;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .input-group {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-family: 'Orbitron', monospace;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .event-title {
+                font-size: 2rem;
+            }
+
+            .time-value {
+                font-size: 2.5rem;
+            }
+
+            .time-unit {
+                min-width: 100px;
+                padding: 25px 15px;
+            }
+
+            .countdown-container {
+                gap: 15px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="event-title" id="eventTitle">NEW YEAR 2026</h1>
+        <p class="event-date" id="eventDate">January 1, 2026 00:00:00</p>
+
+        <div class="countdown-container" id="countdown">
+            <div class="time-unit">
+                <span class="time-value" id="days">00</span>
+                <span class="time-label">Days</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-value" id="hours">00</span>
+                <span class="time-label">Hours</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-value" id="minutes">00</span>
+                <span class="time-label">Minutes</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-value" id="seconds">00</span>
+                <span class="time-label">Seconds</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="titleInput" placeholder="Event Title">
+            <input type="datetime-local" id="dateInput">
+            <button class="btn" onclick="setCustomEvent()">Set Event</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="setPresetEvent('newYear')">New Year 2026</button>
+            <button class="btn" onclick="setPresetEvent('christmas')">Christmas 2025</button>
+            <button class="btn" onclick="setPresetEvent('valentine')">Valentine's 2026</button>
+        </div>
+    </div>
+
+    <script>
+        let targetDate = new Date('2026-01-01T00:00:00').getTime();
+        let timerInterval;
+
+        const elements = {
+            title: document.getElementById('eventTitle'),
+            date: document.getElementById('eventDate'),
+            days: document.getElementById('days'),
+            hours: document.getElementById('hours'),
+            minutes: document.getElementById('minutes'),
+            seconds: document.getElementById('seconds'),
+            countdown: document.getElementById('countdown'),
+            titleInput: document.getElementById('titleInput'),
+            dateInput: document.getElementById('dateInput')
+        };
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                elements.countdown.innerHTML = '<div class="expired">🎉 EVENT HAS STARTED! 🎉</div>';
+                clearInterval(timerInterval);
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            elements.days.textContent = String(days).padStart(2, '0');
+            elements.hours.textContent = String(hours).padStart(2, '0');
+            elements.minutes.textContent = String(minutes).padStart(2, '0');
+            elements.seconds.textContent = String(seconds).padStart(2, '0');
+        }
+
+        function setCustomEvent() {
+            const title = elements.titleInput.value.trim();
+            const dateValue = elements.dateInput.value;
+
+            if (!dateValue) {
+                alert('Please select a date and time');
+                return;
+            }
+
+            const newDate = new Date(dateValue).getTime();
+
+            if (newDate <= new Date().getTime()) {
+                alert('Please select a future date');
+                return;
+            }
+
+            targetDate = newDate;
+            elements.title.textContent = title || 'CUSTOM EVENT';
+            elements.date.textContent = new Date(dateValue).toLocaleString();
+
+            restartTimer();
+        }
+
+        function setPresetEvent(preset) {
+            const presets = {
+                newYear: {
+                    title: 'NEW YEAR 2026',
+                    date: '2026-01-01T00:00:00',
+                    display: 'January 1, 2026 00:00:00'
+                },
+                christmas: {
+                    title: 'CHRISTMAS 2025',
+                    date: '2025-12-25T00:00:00',
+                    display: 'December 25, 2025 00:00:00'
+                },
+                valentine: {
+                    title: "VALENTINE'S DAY 2026",
+                    date: '2026-02-14T00:00:00',
+                    display: 'February 14, 2026 00:00:00'
+                }
+            };
+
+            const event = presets[preset];
+            targetDate = new Date(event.date).getTime();
+            elements.title.textContent = event.title;
+            elements.date.textContent = event.display;
+
+            restartTimer();
+        }
+
+        function restartTimer() {
+            clearInterval(timerInterval);
+            elements.countdown.innerHTML = `
+                <div class="time-unit">
+                    <span class="time-value" id="days">00</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="hours">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="minutes">00</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="seconds">00</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+            `;
+
+            elements.days = document.getElementById('days');
+            elements.hours = document.getElementById('hours');
+            elements.minutes = document.getElementById('minutes');
+            elements.seconds = document.getElementById('seconds');
+
+            timerInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        }
+
+        timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+
+</html>
