@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Card with Hover Effects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .product-card {
+            width: 350px;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.1) rotate(2deg);
+        }
+
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            transform: translateY(-50px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .product-card:hover .badge {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #ccc;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .wishlist-btn:hover {
+            background: #ff6b6b;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .wishlist-btn.active {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .card-body {
+            padding: 30px;
+            position: relative;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .product-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            color: #ffd700;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .price {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .original-price {
+            font-size: 18px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+
+        .discount {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card-footer {
+            padding: 0 30px 30px;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .product-features {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .product-card:hover .product-features {
+            transform: translateY(0);
+        }
+
+        .features-list {
+            list-style: none;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .features-list li {
+            padding: 3px 0;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .product-card:hover .price {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 480px) {
+            .product-card {
+                width: 90%;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="product-card">
+        <div class="card-header">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop"
+                alt="Premium Headphones" class="product-image">
+            <div class="badge">-25% OFF</div>
+            <button class="wishlist-btn" onclick="toggleWishlist(this)">♡</button>
+        </div>
+
+        <div class="card-body">
+            <div class="product-category">Electronics</div>
+            <h2 class="product-title">Premium Wireless Headphones</h2>
+            <p class="product-description">
+                Experience crystal-clear sound with our premium wireless headphones featuring active noise cancellation
+                and 30-hour battery life.
+            </p>
+
+            <div class="rating">
+                <div class="stars">★★★★★</div>
+                <span class="rating-text">(4.8/5) · 1,247 reviews</span>
+            </div>
+
+            <div class="price-section">
+                <div>
+                    <span class="price">$149</span>
+                    <span class="original-price">$199</span>
+                </div>
+                <div class="discount">SAVE $50</div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <div class="btn-container">
+                <button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow()">Buy Now</button>
+            </div>
+        </div>
+
+        <div class="product-features">
+            <ul class="features-list">
+                <li>Active Noise Cancellation</li>
+                <li>30-Hour Battery Life</li>
+                <li>Bluetooth 5.0 Connectivity</li>
+                <li>Premium Build Quality</li>
+                <li>1-Year Warranty</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleWishlist(btn) {
+            btn.classList.toggle('active');
+            btn.innerHTML = btn.classList.contains('active') ? '♥' : '♡';
+
+            if (btn.classList.contains('active')) {
+                btn.style.animation = 'pulse 0.6s ease';
+                setTimeout(() => btn.style.animation = '', 600);
+            }
+        }
+
+        function addToCart() {
+            alert('Added to cart! 🛒');
+        }
+
+        function buyNow() {
+            alert('Redirecting to checkout... 💳');
+        }
+
+        const card = document.querySelector('.product-card');
+        let isHovered = false;
+
+        card.addEventListener('mouseenter', () => isHovered = true);
+        card.addEventListener('mouseleave', () => isHovered = false);
+
+        card.addEventListener('mousemove', (e) => {
+            if (!isHovered) return;
+
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = (y - centerY) / 20;
+            const rotateY = (centerX - x) / 20;
+
+            card.style.transform = `translateY(-10px) scale(1.02) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+    </script>
+</body>
+
+</html>
