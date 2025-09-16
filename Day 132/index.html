@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Scroll Feed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .feed {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .feed-item {
+            background: white;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #4facfe;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideIn 0.6s ease-out forwards;
+            transition: all 0.3s ease;
+        }
+
+        .feed-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .feed-item h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+
+        .feed-item p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .feed-item .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .end-message {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Content Feed</h1>
+            <p>Infinite scrolling demo with smooth animations</p>
+        </div>
+        <div class="feed" id="feed"></div>
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            Loading more content...
+        </div>
+        <div class="end-message" id="endMessage" style="display: none;">
+            🎉 You've reached the end of the feed!
+        </div>
+    </div>
+
+    <script>
+        class InfiniteScrollFeed {
+            constructor() {
+                this.feed = document.getElementById('feed');
+                this.loading = document.getElementById('loading');
+                this.endMessage = document.getElementById('endMessage');
+                this.currentPage = 0;
+                this.isLoading = false;
+                this.hasMoreContent = true;
+                this.itemsPerPage = 5;
+                this.maxPages = 10;
+
+                this.init();
+            }
+
+            init() {
+                this.loadContent();
+                this.setupScrollListener();
+            }
+
+            setupScrollListener() {
+                this.feed.addEventListener('scroll', () => {
+                    if (this.shouldLoadMore()) {
+                        this.loadContent();
+                    }
+                });
+            }
+
+            shouldLoadMore() {
+                const { scrollTop, scrollHeight, clientHeight } = this.feed;
+                return scrollTop + clientHeight >= scrollHeight - 100 &&
+                    !this.isLoading &&
+                    this.hasMoreContent;
+            }
+
+            async loadContent() {
+                if (this.isLoading || !this.hasMoreContent) return;
+
+                this.isLoading = true;
+                this.showLoading();
+
+                await this.simulateNetworkDelay();
+
+                const newItems = this.generateContent();
+                this.renderItems(newItems);
+
+                this.currentPage++;
+                this.isLoading = false;
+                this.hideLoading();
+
+                if (this.currentPage >= this.maxPages) {
+                    this.hasMoreContent = false;
+                    this.showEndMessage();
+                }
+            }
+
+            generateContent() {
+                const categories = ['Technology', 'Design', 'Science', 'Art', 'Music'];
+                const titles = [
+                    'The Future of Web Development',
+                    'Design Principles That Matter',
+                    'Breakthrough in Quantum Computing',
+                    'Modern Art Movements',
+                    'The Evolution of Digital Music'
+                ];
+                const descriptions = [
+                    'Exploring cutting-edge technologies and their impact on modern development practices.',
+                    'Understanding the fundamental principles that make great design work effectively.',
+                    'Recent discoveries that could revolutionize how we think about computation.',
+                    'A deep dive into contemporary artistic expressions and their cultural significance.',
+                    'How digital platforms have transformed the music industry and listening habits.'
+                ];
+
+                const items = [];
+                for (let i = 0; i < this.itemsPerPage; i++) {
+                    const index = (this.currentPage * this.itemsPerPage + i) % titles.length;
+                    items.push({
+                        id: this.currentPage * this.itemsPerPage + i + 1,
+                        title: `${titles[index]} #${this.currentPage * this.itemsPerPage + i + 1}`,
+                        description: descriptions[index],
+                        category: categories[index],
+                        timestamp: new Date().toLocaleDateString()
+                    });
+                }
+                return items;
+            }
+
+            renderItems(items) {
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        const element = this.createItemElement(item);
+                        this.feed.appendChild(element);
+                    }, index * 100);
+                });
+            }
+
+            createItemElement(item) {
+                const div = document.createElement('div');
+                div.className = 'feed-item';
+                div.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <div class="meta">
+                        <span class="tag">${item.category}</span>
+                        <span>${item.timestamp}</span>
+                    </div>
+                `;
+                return div;
+            }
+
+            simulateNetworkDelay() {
+                return new Promise(resolve =>
+                    setTimeout(resolve, Math.random() * 1000 + 500)
+                );
+            }
+
+            showLoading() {
+                this.loading.style.display = 'block';
+            }
+
+            hideLoading() {
+                this.loading.style.display = 'none';
+            }
+
+            showEndMessage() {
+                this.endMessage.style.display = 'block';
+            }
+        }
+
+        new InfiniteScrollFeed();
+    </script>
+</body>
+
+</html>
