@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Switcher Demo</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --accent: #007bff;
+            --border: #dee2e6;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --button-bg: #e9ecef;
+            --button-hover: #dee2e6;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #adb5bd;
+            --accent: #4dabf7;
+            --border: #495057;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --card-bg: #2d2d2d;
+            --header-bg: #212529;
+            --button-bg: #495057;
+            --button-hover: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--button-hover);
+        }
+
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--button-bg);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            position: relative;
+            width: 80px;
+            height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .toggle-switch {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        [data-theme="dark"] .toggle-switch {
+            transform: translateX(40px);
+        }
+
+        .theme-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .theme-btn {
+            background: var(--button-bg);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-1px);
+        }
+
+        .theme-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .features {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .theme-options {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .theme-switcher {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">ThemeSwitch</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="theme-switcher">
+                <div class="theme-toggle" id="themeToggle">
+                    <div class="toggle-switch" id="toggleSwitch">🌙</div>
+                </div>
+                <div class="theme-options">
+                    <button class="theme-btn" data-theme="light">Light</button>
+                    <button class="theme-btn" data-theme="dark">Dark</button>
+                    <button class="theme-btn" data-theme="auto">Auto</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Theme Switcher Demo</h1>
+            <p>Experience seamless transitions between light and dark themes with automatic system preference detection
+                and persistent storage.</p>
+        </section>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Dynamic Theming</h3>
+                <p>Switch between light and dark themes instantly with smooth CSS transitions and custom properties for
+                    consistent styling.</p>
+                <button class="btn">Learn More</button>
+            </div>
+            <div class="card">
+                <h3>System Integration</h3>
+                <p>Automatically detects your system's color scheme preference and applies the matching theme for
+                    optimal user experience.</p>
+                <button class="btn">Explore</button>
+            </div>
+            <div class="card">
+                <h3>Persistent Settings</h3>
+                <p>Your theme preference is saved locally and restored when you revisit the page, ensuring consistency
+                    across sessions.</p>
+                <button class="btn">Try Now</button>
+            </div>
+        </div>
+
+        <section class="features">
+            <h2>Features</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon">🎨</div>
+                    <div>
+                        <strong>CSS Custom Properties</strong>
+                        <p>Dynamic theming with CSS variables</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💾</div>
+                    <div>
+                        <strong>Local Storage</strong>
+                        <p>Persistent theme preferences</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔄</div>
+                    <div>
+                        <strong>Smooth Transitions</strong>
+                        <p>Elegant theme switching animations</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div>
+                        <strong>Responsive Design</strong>
+                        <p>Works perfectly on all devices</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        class ThemeSwitcher {
+            constructor() {
+                this.currentTheme = 'light';
+                this.systemPreference = 'light';
+                this.themeToggle = document.getElementById('themeToggle');
+                this.toggleSwitch = document.getElementById('toggleSwitch');
+                this.themeButtons = document.querySelectorAll('.theme-btn');
+
+                this.init();
+            }
+
+            init() {
+                this.detectSystemPreference();
+                this.loadSavedTheme();
+                this.setupEventListeners();
+                this.updateUI();
+            }
+
+            detectSystemPreference() {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    this.systemPreference = 'dark';
+                } else {
+                    this.systemPreference = 'light';
+                }
+
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    this.systemPreference = e.matches ? 'dark' : 'light';
+
+                    const savedTheme = localStorage.getItem('theme-preference');
+                    if (savedTheme === 'auto' || !savedTheme) {
+                        this.applyTheme(this.systemPreference);
+                    }
+                });
+            }
+
+            loadSavedTheme() {
+                const savedTheme = localStorage.getItem('theme-preference');
+
+                if (savedTheme) {
+                    if (savedTheme === 'auto') {
+                        this.currentTheme = this.systemPreference;
+                    } else {
+                        this.currentTheme = savedTheme;
+                    }
+                } else {
+                    // Default to system preference if no saved theme
+                    this.currentTheme = this.systemPreference;
+                    localStorage.setItem('theme-preference', 'auto');
+                }
+
+                this.applyTheme(this.currentTheme);
+            }
+
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                this.currentTheme = theme;
+                this.updateToggleSwitch();
+            }
+
+            updateToggleSwitch() {
+                const isDark = this.currentTheme === 'dark';
+                this.toggleSwitch.textContent = isDark ? '☀️' : '🌙';
+            }
+
+            updateUI() {
+                const savedPreference = localStorage.getItem('theme-preference') || 'auto';
+
+                this.themeButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === savedPreference);
+                });
+            }
+
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.setTheme(newTheme);
+            }
+
+            setTheme(theme) {
+                if (theme === 'auto') {
+                    this.applyTheme(this.systemPreference);
+                } else {
+                    this.applyTheme(theme);
+                }
+
+                localStorage.setItem('theme-preference', theme);
+                this.updateUI();
+            }
+
+            setupEventListeners() {
+                // Toggle button click
+                this.themeToggle.addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+
+                // Theme option buttons
+                this.themeButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.setTheme(btn.dataset.theme);
+                    });
+                });
+
+                // Keyboard shortcut (Ctrl/Cmd + Shift + T)
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
+                        e.preventDefault();
+                        this.toggleTheme();
+                    }
+                });
+
+                // Add smooth transition class after initial load
+                setTimeout(() => {
+                    document.body.classList.add('transitions-enabled');
+                }, 100);
+            }
+        }
+
+        // Initialize theme switcher when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ThemeSwitcher();
+        });
+
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.btn');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = btn.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+
+                    btn.style.position = 'relative';
+                    btn.style.overflow = 'hidden';
+                    btn.appendChild(ripple);
+
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>
