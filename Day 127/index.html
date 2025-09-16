@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #3498db;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .post {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .post:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .post-title {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .post-meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-excerpt {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .read-more {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .widget {
+            margin-bottom: 2rem;
+        }
+
+        .widget:last-child {
+            margin-bottom: 0;
+        }
+
+        .widget-title {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .widget ul {
+            list-style: none;
+        }
+
+        .widget ul li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .widget ul li:last-child {
+            border-bottom: none;
+        }
+
+        .widget ul li a {
+            color: #555;
+            text-decoration: none;
+        }
+
+        .widget ul li a:hover {
+            color: #3498db;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            main {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">My Blog</div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <div class="content">
+                <article class="post">
+                    <h2 class="post-title">Getting Started with Web Development</h2>
+                    <div class="post-meta">Posted on March 15, 2024 by Admin</div>
+                    <div class="post-excerpt">
+                        Web development is an exciting field that combines creativity with technical skills. Whether
+                        you're just starting out or looking to expand your knowledge, understanding the fundamentals of
+                        HTML, CSS, and JavaScript is essential.
+                    </div>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+
+                <article class="post">
+                    <h2 class="post-title">CSS Grid vs Flexbox: When to Use Each</h2>
+                    <div class="post-meta">Posted on March 10, 2024 by Admin</div>
+                    <div class="post-excerpt">
+                        Both CSS Grid and Flexbox are powerful layout tools, but they serve different purposes.
+                        Understanding when to use each one can significantly improve your web design workflow and create
+                        more maintainable code.
+                    </div>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+
+                <article class="post">
+                    <h2 class="post-title">Responsive Design Best Practices</h2>
+                    <div class="post-meta">Posted on March 5, 2024 by Admin</div>
+                    <div class="post-excerpt">
+                        Creating responsive websites that work well on all devices is crucial in today's mobile-first
+                        world. Learn the essential techniques and strategies for building adaptive layouts.
+                    </div>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+
+            <aside class="sidebar">
+                <div class="widget">
+                    <h3 class="widget-title">Recent Posts</h3>
+                    <ul>
+                        <li><a href="#">Getting Started with Web Development</a></li>
+                        <li><a href="#">CSS Grid vs Flexbox</a></li>
+                        <li><a href="#">Responsive Design Best Practices</a></li>
+                        <li><a href="#">JavaScript ES6 Features</a></li>
+                    </ul>
+                </div>
+
+                <div class="widget">
+                    <h3 class="widget-title">Categories</h3>
+                    <ul>
+                        <li><a href="#">Web Development</a></li>
+                        <li><a href="#">CSS</a></li>
+                        <li><a href="#">JavaScript</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                    </ul>
+                </div>
+
+                <div class="widget">
+                    <h3 class="widget-title">Archives</h3>
+                    <ul>
+                        <li><a href="#">March 2024</a></li>
+                        <li><a href="#">February 2024</a></li>
+                        <li><a href="#">January 2024</a></li>
+                    </ul>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 My Blog. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
