@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #6c5ce7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #0984e3, #6c5ce7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .converter-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .temperature-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .temperature-input:focus {
+            border-color: #0984e3;
+            box-shadow: 0 0 20px rgba(9, 132, 227, 0.2);
+            background: white;
+        }
+
+        .temperature-input::placeholder {
+            color: #aaa;
+        }
+
+        .unit-indicator {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0984e3;
+            pointer-events: none;
+        }
+
+        .swap-button {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swap-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .swap-button:hover::before {
+            left: 100%;
+        }
+
+        .swap-button:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 12px 35px rgba(0, 184, 148, 0.4);
+        }
+
+        .result-display {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(232, 67, 147, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .result-display:hover {
+            transform: scale(1.02);
+        }
+
+        .result-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .temperature-scale {
+            background: linear-gradient(to right, #74b9ff, #0984e3, #6c5ce7, #a29bfe, #fd79a8);
+            height: 10px;
+            border-radius: 5px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temperature-indicator {
+            position: absolute;
+            top: -5px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: left 0.5s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .quick-convert {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .quick-btn {
+            background: rgba(116, 185, 255, 0.2);
+            border: 2px solid #74b9ff;
+            color: #0984e3;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .quick-btn:hover {
+            background: #74b9ff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        }
+
+        .conversion-info {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 15px;
+            border-left: 4px solid #74b9ff;
+        }
+
+        .conversion-formula {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .temperature-input {
+                font-size: 1.3rem;
+                padding: 0.8rem 1.2rem;
+            }
+
+            .result-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Temperature Converter</h1>
+        <p class="subtitle">Convert between Celsius and Fahrenheit instantly</p>
+
+        <div class="converter-section">
+            <div class="input-group">
+                <label class="input-label" id="inputLabel">Enter Temperature in Celsius</label>
+                <div style="position: relative;">
+                    <input type="number" class="temperature-input" id="temperatureInput"
+                        placeholder="Enter temperature..." step="0.1">
+                    <span class="unit-indicator" id="inputUnit">°C</span>
+                </div>
+            </div>
+
+            <button class="swap-button" id="swapButton" title="Switch units">⇅</button>
+
+            <div class="result-display" id="resultDisplay">
+                <div class="result-text" id="resultText">Fahrenheit</div>
+                <div class="result-value" id="resultValue">32.0°F</div>
+            </div>
+        </div>
+
+        <div class="temperature-scale">
+            <div class="temperature-indicator" id="temperatureIndicator"></div>
+        </div>
+
+        <div class="quick-convert">
+            <button class="quick-btn" onclick="quickConvert(0)">Freezing Point</button>
+            <button class="quick-btn" onclick="quickConvert(100)">Boiling Point</button>
+            <button class="quick-btn" onclick="quickConvert(37)">Body Temp</button>
+            <button class="quick-btn" onclick="quickConvert(25)">Room Temp</button>
+        </div>
+
+        <div class="conversion-info">
+            <strong>Current Mode:</strong> <span id="currentMode">Celsius → Fahrenheit</span>
+            <div class="conversion-formula" id="formulaDisplay">
+                Formula: °F = (°C × 9/5) + 32
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isCelsiusToFahrenheit = true;
+
+        const elements = {
+            input: document.getElementById('temperatureInput'),
+            inputLabel: document.getElementById('inputLabel'),
+            inputUnit: document.getElementById('inputUnit'),
+            resultText: document.getElementById('resultText'),
+            resultValue: document.getElementById('resultValue'),
+            swapButton: document.getElementById('swapButton'),
+            currentMode: document.getElementById('currentMode'),
+            formulaDisplay: document.getElementById('formulaDisplay'),
+            indicator: document.getElementById('temperatureIndicator')
+        };
+
+        function celsiusToFahrenheit(celsius) {
+            return (celsius * 9 / 5) + 32;
+        }
+
+        function fahrenheitToCelsius(fahrenheit) {
+            return (fahrenheit - 32) * 5 / 9;
+        }
+
+        function convertTemperature() {
+            const inputValue = parseFloat(elements.input.value);
+
+            if (isNaN(inputValue)) {
+                elements.resultValue.textContent = '--';
+                updateIndicator(0);
+                return;
+            }
+
+            let result, celsiusValue;
+
+            if (isCelsiusToFahrenheit) {
+                result = celsiusToFahrenheit(inputValue);
+                celsiusValue = inputValue;
+                elements.resultValue.textContent = `${result.toFixed(1)}°F`;
+            } else {
+                result = fahrenheitToCelsius(inputValue);
+                celsiusValue = result;
+                elements.resultValue.textContent = `${result.toFixed(1)}°C`;
+            }
+
+            updateIndicator(celsiusValue);
+            updateResultColor(celsiusValue);
+        }
+
+        function updateIndicator(celsiusValue) {
+            const minTemp = -20;
+            const maxTemp = 50;
+            let percentage = ((celsiusValue - minTemp) / (maxTemp - minTemp)) * 100;
+            percentage = Math.max(0, Math.min(100, percentage));
+
+            elements.indicator.style.left = `${percentage}%`;
+        }
+
+        function updateResultColor(celsiusValue) {
+            const resultDisplay = document.getElementById('resultDisplay');
+            let gradient;
+
+            if (celsiusValue < 0) {
+                gradient = 'linear-gradient(135deg, #74b9ff, #0984e3)'; // Cold - Blue
+            } else if (celsiusValue < 15) {
+                gradient = 'linear-gradient(135deg, #00cec9, #00b894)'; // Cool - Teal
+            } else if (celsiusValue < 25) {
+                gradient = 'linear-gradient(135deg, #6c5ce7, #a29bfe)'; // Mild - Purple
+            } else if (celsiusValue < 35) {
+                gradient = 'linear-gradient(135deg, #fdcb6e, #e17055)'; // Warm - Orange
+            } else {
+                gradient = 'linear-gradient(135deg, #fd79a8, #e84393)'; // Hot - Pink/Red
+            }
+
+            resultDisplay.style.background = gradient;
+        }
+
+        function swapUnits() {
+            isCelsiusToFahrenheit = !isCelsiusToFahrenheit;
+
+            if (isCelsiusToFahrenheit) {
+                elements.inputLabel.textContent = 'Enter Temperature in Celsius';
+                elements.inputUnit.textContent = '°C';
+                elements.resultText.textContent = 'Fahrenheit';
+                elements.currentMode.textContent = 'Celsius → Fahrenheit';
+                elements.formulaDisplay.textContent = 'Formula: °F = (°C × 9/5) + 32';
+            } else {
+                elements.inputLabel.textContent = 'Enter Temperature in Fahrenheit';
+                elements.inputUnit.textContent = '°F';
+                elements.resultText.textContent = 'Celsius';
+                elements.currentMode.textContent = 'Fahrenheit → Celsius';
+                elements.formulaDisplay.textContent = 'Formula: °C = (°F - 32) × 5/9';
+            }
+
+            elements.input.value = '';
+            elements.resultValue.textContent = '--';
+            updateIndicator(0);
+        }
+
+        function quickConvert(celsius) {
+            if (isCelsiusToFahrenheit) {
+                elements.input.value = celsius;
+            } else {
+                elements.input.value = celsiusToFahrenheit(celsius);
+            }
+            convertTemperature();
+        }
+
+        elements.input.addEventListener('input', convertTemperature);
+        elements.input.addEventListener('keyup', convertTemperature);
+        elements.swapButton.addEventListener('click', swapUnits);
+
+        elements.input.value = '20';
+        convertTemperature();
+
+        elements.input.addEventListener('focus', function () {
+            this.style.transform = 'scale(1.02)';
+        });
+
+        elements.input.addEventListener('blur', function () {
+            this.style.transform = 'scale(1)';
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                convertTemperature();
+            } else if (event.key === ' ' && event.target !== elements.input) {
+                event.preventDefault();
+                swapUnits();
+            }
+        });
+    </script>
+</body>
+</body>
+
+</html>
