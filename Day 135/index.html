@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Bar Animations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .progress-section {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            position: relative;
+            background: #e0e0e0;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50px;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .gradient-progress {
+            background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .neon-progress {
+            background: linear-gradient(90deg, #00f5ff 0%, #ff00ff 100%);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+            animation: neonGlow 2s ease-in-out infinite alternate;
+        }
+
+        .striped-progress {
+            background: linear-gradient(90deg, #56ab2f 0%, #a8e6cf 100%);
+            background-image: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 255, 255, .2) 10px,
+                    rgba(255, 255, 255, .2) 20px);
+            animation: stripeMove 1s linear infinite;
+        }
+
+        .pulse-progress {
+            background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .circular-progress {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(#4facfe 0deg, #00f2fe 0deg, #e0e0e0 0deg);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            transition: background 1s ease-in-out;
+        }
+
+        .circular-progress::before {
+            content: '';
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+
+        .circular-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #555;
+            z-index: 1;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes neonGlow {
+            0% {
+                box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+            }
+
+            100% {
+                box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 245, 255, 0.3);
+            }
+        }
+
+        @keyframes stripeMove {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 40px 0;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(1.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Progress Bar Animations</h1>
+
+        <div class="progress-section">
+            <div class="progress-title">Classic Animated Progress</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress1">
+                    <div class="progress-text" id="text1">0%</div>
+                </div>
+            </div>
+            <div class="progress-info">
+                <span>Loading...</span>
+                <span id="speed1">Speed: Normal</span>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-title">Gradient Progress</div>
+            <div class="progress-container">
+                <div class="progress-bar gradient-progress" id="progress2">
+                    <div class="progress-text" id="text2">0%</div>
+                </div>
+            </div>
+            <div class="progress-info">
+                <span>Processing...</span>
+                <span id="speed2">Speed: Normal</span>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-title">Neon Glow Progress</div>
+            <div class="progress-container">
+                <div class="progress-bar neon-progress" id="progress3">
+                    <div class="progress-text" id="text3">0%</div>
+                </div>
+            </div>
+            <div class="progress-info">
+                <span>Uploading...</span>
+                <span id="speed3">Speed: Normal</span>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-title">Striped Progress</div>
+            <div class="progress-container">
+                <div class="progress-bar striped-progress" id="progress4">
+                    <div class="progress-text" id="text4">0%</div>
+                </div>
+            </div>
+            <div class="progress-info">
+                <span>Installing...</span>
+                <span id="speed4">Speed: Normal</span>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-title">Pulse Progress</div>
+            <div class="progress-container">
+                <div class="progress-bar pulse-progress" id="progress5">
+                    <div class="progress-text" id="text5">0%</div>
+                </div>
+            </div>
+            <div class="progress-info">
+                <span>Downloading...</span>
+                <span id="speed5">Speed: Normal</span>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-title">Circular Progress</div>
+            <div class="circular-progress" id="circularProgress">
+                <div class="circular-text" id="circularText">0%</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="startAllProgress()">Start All</button>
+            <button class="btn btn-secondary" onclick="resetAllProgress()">Reset All</button>
+            <button class="btn btn-success" onclick="randomProgress()">Random Fill</button>
+        </div>
+    </div>
+
+    <script>
+        let progressIntervals = [];
+        let currentProgress = [0, 0, 0, 0, 0, 0];
+
+        function updateProgress(index, value, duration = 1000) {
+            const progressBar = document.getElementById(`progress${index}`);
+            const progressText = document.getElementById(`text${index}`);
+
+            if (progressBar) {
+                progressBar.style.transitionDuration = `${duration}ms`;
+                progressBar.style.width = `${value}%`;
+                if (progressText) {
+                    progressText.textContent = `${Math.round(value)}%`;
+                }
+                currentProgress[index - 1] = value;
+            }
+        }
+
+        function updateCircularProgress(value) {
+            const circular = document.getElementById('circularProgress');
+            const circularText = document.getElementById('circularText');
+            const degrees = (value / 100) * 360;
+
+            circular.style.background = `conic-gradient(
+                #4facfe 0deg,
+                #00f2fe ${degrees}deg,
+                #e0e0e0 ${degrees}deg
+            )`;
+            circularText.textContent = `${Math.round(value)}%`;
+            currentProgress[5] = value;
+        }
+
+        function animateProgress(index, targetValue, speed = 50) {
+            clearInterval(progressIntervals[index - 1]);
+
+            let current = currentProgress[index - 1];
+            const increment = targetValue > current ? 1 : -1;
+            const speedText = document.getElementById(`speed${index}`);
+
+            if (speedText) {
+                const speedMap = { 20: 'Slow', 50: 'Normal', 10: 'Fast' };
+                speedText.textContent = `Speed: ${speedMap[speed] || 'Normal'}`;
+            }
+
+            progressIntervals[index - 1] = setInterval(() => {
+                if ((increment > 0 && current >= targetValue) ||
+                    (increment < 0 && current <= targetValue)) {
+                    clearInterval(progressIntervals[index - 1]);
+                    return;
+                }
+
+                current += increment;
+
+                if (index === 6) {
+                    updateCircularProgress(current);
+                } else {
+                    updateProgress(index, current, 50);
+                }
+            }, speed);
+        }
+
+        function startAllProgress() {
+            animateProgress(1, 100, 30);
+            setTimeout(() => animateProgress(2, 85, 40), 200);
+            setTimeout(() => animateProgress(3, 92, 25), 400);
+            setTimeout(() => animateProgress(4, 78, 35), 600);
+            setTimeout(() => animateProgress(5, 95, 20), 800);
+            setTimeout(() => animateProgress(6, 88, 45), 1000);
+        }
+
+        function resetAllProgress() {
+            progressIntervals.forEach(interval => clearInterval(interval));
+            progressIntervals = [];
+
+            for (let i = 1; i <= 5; i++) {
+                updateProgress(i, 0, 500);
+                currentProgress[i - 1] = 0;
+            }
+            updateCircularProgress(0);
+            currentProgress[5] = 0;
+        }
+
+        function randomProgress() {
+            for (let i = 1; i <= 5; i++) {
+                const randomValue = Math.random() * 100;
+                const randomSpeed = [20, 30, 40, 50][Math.floor(Math.random() * 4)];
+                setTimeout(() => animateProgress(i, randomValue, randomSpeed), i * 100);
+            }
+
+            const randomCircular = Math.random() * 100;
+            setTimeout(() => animateProgress(6, randomCircular, 35), 600);
+        }
+
+        setTimeout(() => {
+            startAllProgress();
+        }, 1000);
+
+        for (let i = 1; i <= 5; i++) {
+            const progressContainer = document.getElementById(`progress${i}`).parentElement;
+            progressContainer.addEventListener('click', () => {
+                const randomValue = Math.random() * 100;
+                animateProgress(i, randomValue, 30);
+            });
+        }
+
+        document.getElementById('circularProgress').addEventListener('click', () => {
+            const randomValue = Math.random() * 100;
+            animateProgress(6, randomValue, 40);
+        });
+    </script>
+</body>
+
+</html>
