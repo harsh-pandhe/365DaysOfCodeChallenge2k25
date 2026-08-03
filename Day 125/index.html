@@ -380,20 +380,36 @@
             toggleBtn.textContent = type === 'password' ? '👁️' : '🙈';
         }
 
+        function secureRandomIndex(max) {
+            const range = 256 - (256 % max);
+            const buf = new Uint8Array(1);
+            let value;
+            do {
+                crypto.getRandomValues(buf);
+                value = buf[0];
+            } while (value >= range);
+            return value % max;
+        }
+
         function generatePassword() {
             const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
             let password = '';
 
-            password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
-            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
-            password += '0123456789'[Math.floor(Math.random() * 10)];
-            password += '!@#$%^&*()_+-='[Math.floor(Math.random() * 13)];
+            password += 'abcdefghijklmnopqrstuvwxyz'[secureRandomIndex(26)];
+            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[secureRandomIndex(26)];
+            password += '0123456789'[secureRandomIndex(10)];
+            password += '!@#$%^&*()_+-='[secureRandomIndex(13)];
 
             for (let i = 4; i < 16; i++) {
-                password += chars[Math.floor(Math.random() * chars.length)];
+                password += chars[secureRandomIndex(chars.length)];
             }
 
-            password = password.split('').sort(() => Math.random() - 0.5).join('');
+            const passwordChars = password.split('');
+            for (let i = passwordChars.length - 1; i > 0; i--) {
+                const j = secureRandomIndex(i + 1);
+                [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+            }
+            password = passwordChars.join('');
 
             passwordInput.value = password;
             passwordInput.type = 'text';
